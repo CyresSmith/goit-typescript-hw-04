@@ -1,5 +1,13 @@
 import noop from 'lodash/noop';
-import { ReactNode, createContext, useContext, useMemo, useState } from 'react';
+import {
+  Dispatch,
+  ReactNode,
+  SetStateAction,
+  createContext,
+  useContext,
+  useMemo,
+  useState,
+} from 'react';
 
 type MenuIds = 'first' | 'second' | 'last';
 
@@ -20,7 +28,7 @@ const MenuSelectedContext = createContext<MenuSelected>({
 });
 
 type MenuAction = {
-  onSelectedMenu: React.Dispatch<React.SetStateAction<SelectedMenu>>;
+  onSelectedMenu: Dispatch<SetStateAction<SelectedMenu>>;
 };
 
 const MenuActionContext = createContext<MenuAction>({
@@ -51,6 +59,12 @@ function MenuProvider({ children }: PropsProvider) {
   );
 
   return (
+    // Тут есть такая ошибка:
+    //'MenuActionContext.Provider' cannot be used as a JSX component.
+    //Its return type 'ReactNode' is not a valid JSX element.
+    //Type 'undefined' is not assignable to type 'Element | null'.ts(2786)
+    //как ее победить?
+
     <MenuActionContext.Provider value={menuContextAction}>
       <MenuSelectedContext.Provider value={menuContextSelected}>
         {children}
@@ -70,6 +84,10 @@ function MenuComponent({ menus }: PropsMenu) {
   return (
     <>
       {menus.map(menu => (
+        // Тут есть такая ошибка:
+        //Property 'div' does not exist on type 'JSX.IntrinsicElements'.ts(2339)
+        //эта ошибка повторяется во всех четырех компонентах и со всеми элементами
+
         <div key={menu.id} onClick={() => onSelectedMenu({ id: menu.id })}>
           {menu.title}{' '}
           {selectedMenu.id === menu.id ? 'Selected' : 'Not selected'}
