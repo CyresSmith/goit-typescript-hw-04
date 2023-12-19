@@ -1,4 +1,15 @@
-import React, {useReducer} from "react";
+import { useReducer } from 'react';
+
+type State = {
+  isRequestInProgress: boolean;
+  requestStep: 'start' | 'pending' | 'finished' | 'idle';
+};
+
+type Action =
+  | { type: 'START_REQUEST' }
+  | { type: 'PENDING_REQUEST' }
+  | { type: 'FINISH_REQUEST' }
+  | { type: 'RESET_REQUEST' };
 
 const initialState: State = {
   isRequestInProgress: false,
@@ -21,14 +32,17 @@ function requestReducer(state: State, action: Action): State {
 }
 
 export function RequestComponent() {
-  const [requestState, requestDispatch] = useReducer(requestReducer, initialState);
+  const [requestState, requestDispatch] = useReducer(
+    requestReducer,
+    initialState
+  );
 
   const startRequest = () => {
     requestDispatch({ type: 'START_REQUEST' });
-    // Імітуємо запит до сервера
+
     setTimeout(() => {
       requestDispatch({ type: 'PENDING_REQUEST' });
-      // Імітуємо отримання відповіді від сервера
+
       setTimeout(() => {
         requestDispatch({ type: 'FINISH_REQUEST' });
       }, 2000);
